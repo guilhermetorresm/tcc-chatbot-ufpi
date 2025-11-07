@@ -11,9 +11,10 @@ from agents.knowledge_base_agent import kb_agent
 from agents.langgraph_supervisor_agent import langgraph_supervisor_agent
 from agents.rag_assistant import rag_assistant
 from agents.research_assistant import research_assistant
+from agents.chatbot_ufpi import chatbot_ufpi
 from schema import AgentInfo
 
-DEFAULT_AGENT = "research-assistant"
+DEFAULT_AGENT = "chatbot_ufpi"
 
 # Type alias to handle LangGraph's different agent patterns
 # - @entrypoint functions return Pregel
@@ -28,23 +29,24 @@ class Agent:
 
 
 agents: dict[str, Agent] = {
-    "chatbot": Agent(description="A simple chatbot.", graph=chatbot),
-    "research-assistant": Agent(
-        description="A research assistant with web search and calculator.", graph=research_assistant
-    ),
-    "rag-assistant": Agent(
-        description="A RAG assistant with access to information in a database.", graph=rag_assistant
-    ),
-    "command-agent": Agent(description="A command agent.", graph=command_agent),
-    "bg-task-agent": Agent(description="A background task agent.", graph=bg_task_agent),
-    "langgraph-supervisor-agent": Agent(
-        description="A langgraph supervisor agent", graph=langgraph_supervisor_agent
-    ),
-    "interrupt-agent": Agent(description="An agent the uses interrupts.", graph=interrupt_agent),
-    "knowledge-base-agent": Agent(
-        description="A retrieval-augmented generation agent using Amazon Bedrock Knowledge Base",
-        graph=kb_agent,
-    ),
+    # "chatbot": Agent(description="A simple chatbot.", graph=chatbot),
+    # "research-assistant": Agent(
+    #     description="A research assistant with web search and calculator.", graph=research_assistant
+    # ),
+    # "rag-assistant": Agent(
+    #     description="A RAG assistant with access to information in a database.", graph=rag_assistant
+    # ),
+    # "command-agent": Agent(description="A command agent.", graph=command_agent),
+    # "bg-task-agent": Agent(description="A background task agent.", graph=bg_task_agent),
+    # "langgraph-supervisor-agent": Agent(
+    #     description="A langgraph supervisor agent", graph=langgraph_supervisor_agent
+    # ),
+    # "interrupt-agent": Agent(description="An agent the uses interrupts.", graph=interrupt_agent),
+    # "knowledge-base-agent": Agent(
+    #     description="A retrieval-augmented generation agent using Amazon Bedrock Knowledge Base",
+    #     graph=kb_agent,
+    # ),
+    "chatbot_ufpi": Agent(description="A simple chatbot.", graph=chatbot_ufpi),
 }
 
 
