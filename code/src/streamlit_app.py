@@ -193,8 +193,13 @@ async def main() -> None:
             case "rag-assistant":
                 WELCOME = """Hello! I'm an AI-powered Company Policy & HR assistant with access to AcmeTech's Employee Handbook.
                 I can help you find information about benefits, remote work, time-off policies, company values, and more. Ask me anything!"""
+            case "chatbot_ufpi":
+                WELCOME = """Olá! Sou o **Assistente Acadêmico Virtual da UFPI** 🎓
+
+Sou especialista no **Regulamento Geral da Graduação (RGG)** da UFPI. Posso esclarecer dúvidas sobre normas acadêmicas do RGG
+Pergunte-me qualquer dúvida sobre o RGG!"""
             case _:
-                WELCOME = "Hello! I'm an AI agent. Ask me anything!"
+                WELCOME = ""
 
         with st.chat_message("ai"):
             st.write(WELCOME)
