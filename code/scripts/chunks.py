@@ -19,7 +19,7 @@ class ChunkExtractor:
     def atualiza_contexto(self, linha):
         # Atualiza título
         if linha.startswith('# '):
-            self.contexto["titulo"] = linha.strip()
+            self.contexto["titulo"] = linha.lstrip('#').strip()
             self.contexto["capitulo"] = ""
             self.contexto["secao"] = ""
             self.contexto["subsecao"] = ""
@@ -27,20 +27,20 @@ class ChunkExtractor:
             
         # Atualiza capítulo
         if linha.startswith('## '):
-            self.contexto["capitulo"] = linha.strip()
+            self.contexto["capitulo"] = linha.lstrip('#').strip()
             self.contexto["secao"] = ""
             self.contexto["subsecao"] = ""
             return True
             
         # Atualiza seção
         if linha.startswith('### '):
-            self.contexto["secao"] = linha.strip()
+            self.contexto["secao"] = linha.lstrip('#').strip()
             self.contexto["subsecao"] = ""
             return True
             
         # Atualiza subseção
         if linha.startswith('#### '):
-            self.contexto["subsecao"] = linha.strip()
+            self.contexto["subsecao"] = linha.lstrip('#').strip()
             return True
             
         return False
