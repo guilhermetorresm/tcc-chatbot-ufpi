@@ -14,7 +14,8 @@ logger = logging.getLogger(__name__)
 
 # Configurações fixas
 _RAG_MODEL = "text-embedding-3-small"
-_RAG_FUNCTION = "match_documentos_v2"
+_RAG_FUNCTION = "match_documentos_v2"  # Para busca semântica (com embedding)
+_RAG_FUNCTION_METADATA = "match_documentos_metadados_only"  # Para busca apenas por metadados
 _RAG_THRESHOLD = 0.4
 _RAG_K_SEMANTIC = 4  # Para busca semântica pura
 _RAG_K_METADATA = 10  # Para busca por metadados (mais resultados)
@@ -138,20 +139,40 @@ def _create_embedding(openai_client: OpenAI, text: str, model: str = _RAG_MODEL)
 def _call_rag_function(
     supabase_client: Client,
     fn_name: str,
-    query_embedding: list[float],
+    query_embedding: Optional[list[float]],
     match_threshold: float,
     match_count: int,
     filtros_metadados: Dict[str, Any],
 ):
-    """Chama a função RPC do Supabase."""
+    """Chama a função RPC do Supabase para busca semântica (com embedding)."""
     payload: Dict[str, Any] = {
         "query_embedding": query_embedding,
         "match_threshold": match_threshold,
         "match_count": match_count,
         "filtros_metadados": filtros_metadados,
     }
+    
     logger.info(
-        f"[SEARCH] Chamando RPC | fn={fn_name} | threshold={match_threshold} | "
+        f"[SEARCH] Chamando RPC semântica | fn={fn_name} | threshold={match_threshold} | "
+        f"k={match_count} | filtros={list(filtros_metadados.keys())}"
+    )
+    return supabase_client.rpc(fn_name, payload).execute()
+
+
+def _call_metadata_only_function(
+    supabase_client: Client,
+    fn_name: str,
+    match_count: int,
+    filtros_metadados: Dict[str, Any],
+):
+    """Chama a função RPC do Supabase para busca apenas por metadados (sem embedding)."""
+    payload: Dict[str, Any] = {
+        "filtros_metadados": filtros_metadados,
+        "match_count": match_count,
+    }
+    
+    logger.info(
+        f"[SEARCH] Chamando RPC metadados | fn={fn_name} | "
         f"k={match_count} | filtros={list(filtros_metadados.keys())}"
     )
     return supabase_client.rpc(fn_name, payload).execute()
@@ -342,6 +363,8 @@ def supabase_metadata_search_func(
         secao_numero: Número da seção em romano (ex: "I", "II")
         subsecao_numero: Número da subseção em romano (ex: "I", "II")
         artigo_numero: Número do artigo (ex: "339", "1", "2")
+        
+    Nota: Esta função realiza busca APENAS por metadados, sem necessidade de query semântica.
     
     Returns:
         String formatada com os resultados encontrados
@@ -373,7 +396,7 @@ def supabase_metadata_search_func(
     
     logger.info("[METADATA] ===== Início da busca por metadados =====")
     logger.info(
-        f"[METADATA] Parâmetros | query_len={len(query)} | fonte={fonte} | "
+        f"[METADATA] Parâmetros | fonte={fonte} | "
         f"titulo={titulo_numero} | cap={capitulo_numero} | sec={secao_numero} | "
         f"subsec={subsecao_numero} | art={artigo_numero}"
     )
@@ -391,8 +414,8 @@ def supabase_metadata_search_func(
         logger.error(f"[METADATA] Validação falhou: {erro}")
         return f"ERRO DE HIERARQUIA: {erro}"
     
-    # Inicializa clientes
-    openai_client, supabase_client = _init_clients()
+    # Inicializa clientes (não precisa do OpenAI para busca apenas por metadados)
+    _, supabase_client = _init_clients()
     
     # Constrói filtros de metadados
     filtros = _build_metadata_filters(
@@ -410,15 +433,10 @@ def supabase_metadata_search_func(
     
     logger.info(f"[METADATA] Filtros construídos: {filtros}")
     
-    # Gera embedding da query
-    query_emb = _create_embedding(openai_client, query, model=_RAG_MODEL)
-    
-    # Executa busca COM filtros de metadados
-    result = _call_rag_function(
+    # Executa busca APENAS por metadados (sem query/embedding)
+    result = _call_metadata_only_function(
         supabase_client,
-        _RAG_FUNCTION,
-        query_embedding=query_emb,
-        match_threshold=_RAG_THRESHOLD,
+        _RAG_FUNCTION_METADATA,
         match_count=_RAG_K_METADATA,
         filtros_metadados=filtros,
     )
@@ -470,13 +488,12 @@ HIERARQUIA OBRIGATÓRIA:
 - SUBSEÇÃO: exige titulo_numero + capitulo_numero + secao_numero
 
 Parâmetros:
-- query (obrigatório): texto para busca semântica
-- fonte: nome do documento fonte
+- fonte: nome do documento fonte (padrão: "Regulamento Geral da Graduação da UFPI")
 - titulo_numero: número romano do título (ex: "XVI")
 - capitulo_numero: número romano do capítulo (ex: "I")
 - secao_numero: número romano da seção (ex: "I")
 - subsecao_numero: número romano da subseção (ex: "I")
 - artigo_numero: número do artigo (ex: "339")
 
-Retorna até 10 resultados da área especificada.
+Retorna até 10 resultados da área especificada (busca APENAS por metadados, sem query semântica).
 """
