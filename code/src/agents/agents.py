@@ -5,6 +5,7 @@ from langgraph.pregel import Pregel
 
 from agents.bg_task_agent.bg_task_agent import bg_task_agent
 from agents.chatbot import chatbot
+from agents.chatbot_generic import chatbot_generic
 from agents.command_agent import command_agent
 from agents.interrupt_agent import interrupt_agent
 from agents.knowledge_base_agent import kb_agent
@@ -46,7 +47,8 @@ agents: dict[str, Agent] = {
     #     description="A retrieval-augmented generation agent using Amazon Bedrock Knowledge Base",
     #     graph=kb_agent,
     # ),
-    "chatbot_ufpi": Agent(description="A simple chatbot.", graph=chatbot_ufpi),
+    "chatbot_ufpi": Agent(description="Assistente acadêmico especializado no RGG da UFPI.", graph=chatbot_ufpi),
+    "chatbot_generic": Agent(description="Chatbot genérico simples para responder dúvidas gerais com suporte a cálculos.", graph=chatbot_generic),
 }
 
 

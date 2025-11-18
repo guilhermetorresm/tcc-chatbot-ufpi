@@ -2,6 +2,7 @@ import logging
 import math
 import os
 import re
+from datetime import datetime
 from typing import Any, Dict, Optional
 
 import numexpr
@@ -49,6 +50,40 @@ def calculator_func(expression: str) -> str:
 
 calculator: BaseTool = tool(calculator_func)
 calculator.name = "Calculator"
+
+
+def get_current_datetime_func() -> str:
+    """Retorna a data e hora atual em um formato contextual e legível.
+
+    Useful for when you need to answer questions about current date and time.
+    Returns date and time in a contextual format suitable for Brazilian Portuguese context.
+
+    Returns:
+        str: Data e hora formatada no formato: "DD de Mês de YYYY, HH:MM"
+    """
+    now = datetime.now()
+    
+    # Mapeamento de meses em português
+    meses = {
+        1: "janeiro", 2: "fevereiro", 3: "março", 4: "abril",
+        5: "maio", 6: "junho", 7: "julho", 8: "agosto",
+        9: "setembro", 10: "outubro", 11: "novembro", 12: "dezembro"
+    }
+    
+    dia = now.day
+    mes_nome = meses[now.month]
+    ano = now.year
+    hora = now.hour
+    minuto = now.minute
+    
+    # Formata a data: "15 de janeiro de 2024, 14:30"
+    data_formatada = f"{dia} de {mes_nome} de {ano}, {hora:02d}:{minuto:02d}"
+    
+    return data_formatada
+
+
+get_current_datetime: BaseTool = tool(get_current_datetime_func)
+get_current_datetime.name = "GetCurrentDateTime"
 
 
 # Format retrieved documents
