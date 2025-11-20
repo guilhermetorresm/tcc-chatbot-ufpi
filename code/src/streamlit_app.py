@@ -198,6 +198,11 @@ async def main() -> None:
 
 Sou especialista no **Regulamento Geral da Graduação (RGG)** da UFPI. Posso esclarecer dúvidas sobre normas acadêmicas do RGG
 Pergunte-me qualquer dúvida sobre o RGG!"""
+            case "chatbot_ufpi_v2":
+                WELCOME = """Olá! Sou o **Assistente Acadêmico Virtual da UFPI** 🎓
+
+Sou especialista no **Regulamento Geral da Graduação (RGG)** da UFPI. Posso esclarecer dúvidas sobre normas acadêmicas do RGG
+Pergunte-me qualquer dúvida sobre o RGG!"""
             case _:
                 WELCOME = ""
 

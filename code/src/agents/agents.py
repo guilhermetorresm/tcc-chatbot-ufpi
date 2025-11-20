@@ -16,7 +16,7 @@ from agents.chatbot_ufpi import chatbot_ufpi
 from agents.chatbot_ufpi_v2 import chatbot_ufpi_v2
 from schema import AgentInfo
 
-DEFAULT_AGENT = "chatbot_ufpi"
+DEFAULT_AGENT = "chatbot_ufpi_v2"
 
 # Type alias to handle LangGraph's different agent patterns
 # - @entrypoint functions return Pregel
