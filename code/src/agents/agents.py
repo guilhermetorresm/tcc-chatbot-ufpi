@@ -13,9 +13,10 @@ from agents.langgraph_supervisor_agent import langgraph_supervisor_agent
 from agents.rag_assistant import rag_assistant
 from agents.research_assistant import research_assistant
 from agents.chatbot_ufpi import chatbot_ufpi
+from agents.chatbot_ufpi_v2 import chatbot_ufpi_v2
 from schema import AgentInfo
 
-DEFAULT_AGENT = "chatbot_ufpi"
+DEFAULT_AGENT = "chatbot_ufpi_v2"
 
 # Type alias to handle LangGraph's different agent patterns
 # - @entrypoint functions return Pregel
@@ -48,6 +49,7 @@ agents: dict[str, Agent] = {
     #     graph=kb_agent,
     # ),
     "chatbot_ufpi": Agent(description="Assistente acadêmico especializado no RGG da UFPI.", graph=chatbot_ufpi),
+    "chatbot_ufpi_v2": Agent(description="Assistente acadêmico especializado no RGG da UFPI (v2) com busca semântica e por metadados.", graph=chatbot_ufpi_v2),
     "chatbot_generic": Agent(description="Chatbot genérico simples para responder dúvidas gerais com suporte a cálculos.", graph=chatbot_generic),
 }
 
